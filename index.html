@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Vision Map™ — Words That Deliver</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --red: #ff0000;
+    --purple: #40003f;
+    --white: #ffffff;
+    --off-white: #faf9f7;
+    --light-grey: #f0eeeb;
+    --mid-grey: #888;
+    --road: #3a3a3a;
+    --road-line: #ffffff;
+  }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--off-white);
+    color: var(--purple);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--purple);
+    padding: 32px 24px 28px;
+    text-align: center;
+  }
+  .header-studio {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 12px;
+  }
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1.1;
+  }
+  .header-title span {
+    color: var(--red);
+  }
+  .header-sub {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.75);
+    margin-top: 10px;
+    letter-spacing: 1px;
+  }
+
+  /* PROGRESS ROAD */
+  .progress-track {
+    background: var(--purple);
+    padding: 0 24px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+  }
+  .progress-step {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.4);
+    transition: all 0.4s ease;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+  .step-dot.done {
+    background: rgba(255,255,255,0.15);
+    border-color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.7);
+  }
+  .step-line {
+    width: 40px;
+    height: 2px;
+    background: rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+  .step-line.done {
+    background: rgba(255,255,255,0.4);
+  }
+
+  /* MAIN */
+  .main {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* SECTION */
+  .section {
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  .section.active {
+    display: block;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION LABEL */
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .label-marker {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--red);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .label-text {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .section-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--purple);
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .section-intro {
+    font-size: 15px;
+    font-weight: 300;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+
+  /* INPUTS */
+  textarea {
+    width: 100%;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    padding: 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--purple);
+    line-height: 1.6;
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.2s;
+    background: white;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--red);
+  }
+  textarea::placeholder {
+    color: #bbb;
+  }
+
+  /* DESTINATION CARDS */
+  .destinations {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+  .dest-card {
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    padding: 18px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: white;
+  }
+  .dest-card:hover {
+    border-color: var(--red);
+  }
+  .dest-card.selected {
+    border-color: var(--red);
+    background: #fff5f5;
+  }
+  .dest-card.selected .dest-check {
+    background: var(--red);
+    border-color: var(--red);
+    color: white;
+  }
+  .dest-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .dest-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--purple);
+  }
+  .dest-check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    color: transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .dest-describe {
+    display: none;
+    margin-top: 12px;
+  }
+  .dest-card.selected .dest-describe {
+    display: block;
+  }
+  .dest-describe textarea {
+    min-height: 80px;
+    font-size: 13px;
+    padding: 12px;
+  }
+  .dest-prompt {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 8px;
+    font-style: italic;
+  }
+
+  /* BUTTON */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 32px;
+    background: var(--red);
+    color: white;
+    border: none;
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 24px;
+  }
+  .btn:hover {
+    background: #cc0000;
+    transform: translateY(-1px);
+  }
+  .btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--purple);
+    border: 2px solid var(--purple);
+    margin-right: 12px;
+  }
+  .btn-secondary:hover {
+    background: var(--purple);
+    color: white;
+  }
+
+  /* DIVIDER */
+  .road-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 36px 0;
+  }
+  .road-divider::before,
+  .road-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+  }
+  .road-divider-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  /* GENERATING */
+  .generating {
+    text-align: center;
+    padding: 60px 24px;
+  }
+  .generating-icon {
+    width: 64px;
+    height: 64px;
+    border: 3px solid #eee;
+    border-top-color: var(--red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 24px;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .generating-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--purple);
+    margin-bottom: 8px;
+  }
+  .generating-sub {
+    font-size: 14px;
+    color: #888;
+    font-weight: 300;
+  }
+
+  /* RESULTS */
+  .results-header {
+    background: var(--purple);
+    border-radius: 4px;
+    padding: 32px 28px;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  .results-header-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 12px;
+  }
+  .results-header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+  }
+  .results-header-title span {
+    color: var(--red);
+  }
+
+  .result-block {
+    background: white;
+    border-left: 4px solid var(--red);
+    border-radius: 0 4px 4px 0;
+    padding: 24px 24px 24px 20px;
+    margin-bottom: 16px;
+  }
+  .result-block-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .result-block-content {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--purple);
+    white-space: pre-wrap;
+  }
+
+  .mission-steps {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .mission-header {
+    background: var(--red);
+    padding: 16px 24px;
+  }
+  .mission-header-text {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: white;
+  }
+  .mission-content {
+    padding: 24px;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.75;
+    color: var(--purple);
+    white-space: pre-wrap;
+  }
+
+  /* CTA */
+  .cta-block {
+    background: var(--red);
+    border-radius: 4px;
+    padding: 36px 28px;
+    text-align: center;
+    margin-top: 36px;
+  }
+  .cta-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 14px;
+  }
+  .cta-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 700;
+    color: white;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .cta-body {
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 16px 36px;
+    background: white;
+    color: var(--red);
+    border-radius: 2px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .cta-btn:hover {
+    background: var(--purple);
+    color: white;
+  }
+
+  .footer {
+    text-align: center;
+    padding: 32px 24px;
+    font-size: 12px;
+    color: #aaa;
+    letter-spacing: 1px;
+  }
+
+  .error-msg {
+    color: var(--red);
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .destinations { grid-template-columns: 1fr; }
+    .header-title { font-size: 32px; }
+    .section-heading { font-size: 28px; }
+    .step-line { width: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-studio">Words That Deliver — The Personal Brand Strategy Studio</div>
+  <div class="header-title">The Vision Map<span>™</span></div>
+  <div class="header-sub">From HERE to THERE — with clarity, purpose, and a plan</div>
+</div>
+
+<div class="progress-track">
+  <div class="progress-step">
+    <div class="step-dot active" id="dot-1">1</div>
+  </div>
+  <div class="step-line" id="line-1"></div>
+  <div class="progress-step">
+    <div class="step-dot" id="dot-2">2</div>
+  </div>
+  <div class="step-line" id="line-2"></div>
+  <div class="progress-step">
+    <div class="step-dot" id="dot-3">3</div>
+  </div>
+  <div class="step-line" id="line-3"></div>
+  <div class="progress-step">
+    <div class="step-dot" id="dot-4">4</div>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- SECTION 1: HERE -->
+  <div class="section active" id="section-1">
+    <div class="section-label">
+      <div class="label-marker">📍</div>
+      <div class="label-text">Step 1 of 4</div>
+    </div>
+    <div class="section-heading">Who are you — and where does that person stand right now?</div>
+    <div class="section-intro">This is where we begin. Not with what you do or who you serve — but with who you are. Your values. Your strengths. What you know to be true about yourself. And honestly, where that person stands right now — certain, uncertain, or somewhere in between.</div>
+
+    <textarea id="here-text" placeholder="Who are you at your core? What do you value? What are you known for by the people who know you best? And where does that woman stand right now — what feels solid, what feels shaky, what feels ready to shift?"></textarea>
+    <div class="error-msg" id="here-error">Please share where you are before moving on.</div>
+
+    <button class="btn" onclick="goTo(2)">Continue →</button>
+  </div>
+
+  <!-- SECTION 2: THERE -->
+  <div class="section" id="section-2">
+    <div class="section-label">
+      <div class="label-marker">🎯</div>
+      <div class="label-text">Step 2 of 4</div>
+    </div>
+    <div class="section-heading">Where are you going?</div>
+    <div class="section-intro">Select the destinations that are calling you right now. Then describe what each one looks like in your life — not in general, but specifically for you.</div>
+
+    <div class="destinations" id="destinations">
+      <div class="dest-card" onclick="toggleDest(this, 'time')">
+        <div class="dest-header">
+          <div class="dest-name">Time</div>
+          <div class="dest-check">✓</div>
+        </div>
+        <div class="dest-describe">
+          <div class="dest-prompt">What does Time look like for you when you get there?</div>
+          <textarea placeholder="e.g. I work four days a week. I stop at 3pm. I am present for my life..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
+
+      <div class="dest-card" onclick="toggleDest(this, 'income')">
+        <div class="dest-header">
+          <div class="dest-name">Income</div>
+          <div class="dest-check">✓</div>
+        </div>
+        <div class="dest-describe">
+          <div class="dest-prompt">What does Income look like for you when you get there?</div>
+          <textarea placeholder="e.g. I have consistent revenue. My rates reflect my value. I am paid well for my expertise..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
+
+      <div class="dest-card" onclick="toggleDest(this, 'joy')">
+        <div class="dest-header">
+          <div class="dest-name">Joy</div>
+          <div class="dest-check">✓</div>
+        </div>
+        <div class="dest-describe">
+          <div class="dest-prompt">What does Joy look like for you when you get there?</div>
+          <textarea placeholder="e.g. I love what I do. I work with people who energise me. I wake up excited..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
+
+      <div class="dest-card" onclick="toggleDest(this, 'freedom')">
+        <div class="dest-header">
+          <div class="dest-name">Freedom</div>
+          <div class="dest-check">✓</div>
+        </div>
+        <div class="dest-describe">
+          <div class="dest-prompt">What does Freedom look like for you when you get there?</div>
+          <textarea placeholder="e.g. I choose my clients. I decide my schedule. I am not dependent on one income stream..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
+
+      <div class="dest-card" onclick="toggleDest(this, 'impact')">
+        <div class="dest-header">
+          <div class="dest-name">Impact</div>
+          <div class="dest-check">✓</div>
+        </div>
+        <div class="dest-describe">
+          <div class="dest-prompt">What does Impact look like for you when you get there?</div>
+          <textarea placeholder="e.g. I am speaking on stages that matter. My work is changing how women see themselves..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
+
+      <div class="dest-card" onclick="toggleDest(this, 'recognition')">
+        <div class="dest-header">
+          <div class="dest-name">Recognition</div>
+          <div class="dest-check">✓</div>
+        </div>
+        <div class="dest-describe">
+          <div class="dest-prompt">What does Recognition look like for you when you get there?</div>
+          <textarea placeholder="e.g. I am known for what I actually do. I am the go-to voice in my space..." onclick="event.stopPropagation()"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-msg" id="there-error">Please select at least one destination.</div>
+    <div>
+      <button class="btn btn-secondary" onclick="goTo(1)">← Back</button>
+      <button class="btn" onclick="goTo(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- SECTION 3: WHY THIS MATTERS -->
+  <div class="section" id="section-3">
+    <div class="section-label">
+      <div class="label-marker">❤️</div>
+      <div class="label-text">Step 3 of 4</div>
+    </div>
+    <div class="section-heading">Why does this matter?</div>
+    <div class="section-intro">This is the heart of the map. Not the polished answer. The real one. What is actually at stake for you if you get there — and what have you been carrying if you don't?</div>
+
+    <textarea id="why-text" placeholder="What changes in your life when you reach THERE? Who are you protecting? What have you been waiting for? What does it cost you to stay where you are?" style="min-height: 140px;"></textarea>
+    <div class="error-msg" id="why-error">Please share why this matters before moving on.</div>
+
+    <div>
+      <button class="btn btn-secondary" onclick="goTo(2)">← Back</button>
+      <button class="btn" onclick="generateMap()">Build My Vision Map →</button>
+    </div>
+  </div>
+
+  <!-- GENERATING -->
+  <div class="section" id="section-generating">
+    <div class="generating">
+      <div class="generating-icon"></div>
+      <div class="generating-text">Building your Vision Map™</div>
+      <div class="generating-sub">Mapping your route from HERE to THERE…</div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: RESULTS -->
+  <div class="section" id="section-4">
+    <div class="results-header">
+      <div class="results-header-label">Your Vision Map™</div>
+      <div class="results-header-title">From HERE to <span>THERE</span></div>
+    </div>
+
+    <div class="result-block">
+      <div class="result-block-label">📍 HERE — Who You Are & Where You Stand</div>
+      <div class="result-block-content" id="result-here"></div>
+    </div>
+
+    <div class="result-block">
+      <div class="result-block-label">🎯 THERE — Your Vision</div>
+      <div class="result-block-content" id="result-there"></div>
+    </div>
+
+    <div class="result-block">
+      <div class="result-block-label">❤️ WHY THIS MATTERS</div>
+      <div class="result-block-content" id="result-why"></div>
+    </div>
+
+    <div class="mission-steps">
+      <div class="mission-header">
+        <div class="mission-header-text">🗺️ Your Mission — Steps from HERE to THERE</div>
+      </div>
+      <div class="mission-content" id="result-steps"></div>
+    </div>
+
+    <div class="cta-block">
+      <div class="cta-eyebrow">Words That Deliver</div>
+      <div class="cta-heading">You have your map.<br>Now let's walk the road together.</div>
+      <div class="cta-body">Your Vision Map™ shows you where you are, where you're going, and why it matters. The next step is working with a personal brand strategist who can make the route real — with precision, clarity, and a strategy built entirely around you.</div>
+      <a href="https://wordsthatdeliver.com" class="cta-btn">Work With Words That Deliver</a>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <button class="btn btn-secondary" onclick="startAgain()">Start Again</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  © Carole Pyke · Words That Deliver · The Vision Map™ · wordsthatdeliver.com
+</div>
+
+<script>
+  let currentSection = 1;
+  const selectedDests = new Set();
+
+  function goTo(n) {
+    // Validate
+    if (n > currentSection) {
+      if (currentSection === 1) {
+        const val = document.getElementById('here-text').value.trim();
+        if (!val) {
+          document.getElementById('here-error').style.display = 'block';
+          return;
+        }
+        document.getElementById('here-error').style.display = 'none';
+      }
+      if (currentSection === 2) {
+        if (selectedDests.size === 0) {
+          document.getElementById('there-error').style.display = 'block';
+          return;
+        }
+        document.getElementById('there-error').style.display = 'none';
+      }
+      if (currentSection === 3) {
+        const val = document.getElementById('why-text').value.trim();
+        if (!val) {
+          document.getElementById('why-error').style.display = 'block';
+          return;
+        }
+        document.getElementById('why-error').style.display = 'none';
+      }
+    }
+
+    document.getElementById(`section-${currentSection}`).classList.remove('active');
+    currentSection = n;
+    document.getElementById(`section-${n}`).classList.add('active');
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress(n) {
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById(`dot-${i}`);
+      dot.classList.remove('active', 'done');
+      if (i < n) dot.classList.add('done');
+      if (i === n) dot.classList.add('active');
+      if (i < 4) {
+        const line = document.getElementById(`line-${i}`);
+        line.classList.toggle('done', i < n);
+      }
+    }
+  }
+
+  function toggleDest(card, key) {
+    if (selectedDests.has(key)) {
+      selectedDests.delete(key);
+      card.classList.remove('selected');
+    } else {
+      selectedDests.add(key);
+      card.classList.add('selected');
+    }
+  }
+
+  function getDestData() {
+    const cards = document.querySelectorAll('.dest-card');
+    const results = [];
+    cards.forEach(card => {
+      if (card.classList.contains('selected')) {
+        const name = card.querySelector('.dest-name').textContent;
+        const desc = card.querySelector('textarea').value.trim();
+        results.push({ name, desc });
+      }
+    });
+    return results;
+  }
+
+  async function generateMap() {
+    const why = document.getElementById('why-text').value.trim();
+    if (!why) {
+      document.getElementById('why-error').style.display = 'block';
+      return;
+    }
+    document.getElementById('why-error').style.display = 'none';
+
+    const here = document.getElementById('here-text').value.trim();
+    const dests = getDestData();
+    const thereText = dests.map(d => `${d.name}${d.desc ? ': ' + d.desc : ''}`).join('\n');
+
+    // Show generating
+    document.getElementById('section-3').classList.remove('active');
+    document.getElementById('section-generating').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const prompt = `You are a personal brand strategist at Words That Deliver — The Personal Brand Strategy Studio, founded by Carole Pyke, The Sparkle Navigator™. Your approach is direct, clear, warm, and strategic. You never use coaching language, wellness language, or personal development language. You speak to individuals — women — not business owners. This is about the person, not the company they run or the role they hold.
+
+A woman has just completed The Vision Map™ tool. Here is what she shared:
+
+HERE (who she is and where that person stands right now):
+${here}
+
+THERE (her destinations and what they look like for her):
+${thereText}
+
+WHY THIS MATTERS (what's at stake for her):
+${why}
+
+Your task is to write two things:
+
+1. A SHORT REFLECTION (2-3 sentences) that names what you see clearly — not a summary, but an observation that makes her feel seen as an individual. Start with "What's clear is..." Do not use the words: empower, transform, journey, reconnect, sanctuary, truth, reinvention, business, brand, visibility.
+
+2. A MISSION — 5 to 7 specific, practical, strategic steps she needs to take as an individual to move from HERE to THERE. These are not generic tips. They come directly from what she has shared about who she is. Frame each step as a clear action. Label them as Step 1, Step 2 etc. After the steps, add one sentence that connects the steps back to her WHY — the reason it's worth doing.
+
+Format:
+REFLECTION:
+[your reflection]
+
+MISSION:
+[your steps]`;
+
+    
+
+    try {
+      const response = await fetch("/.netlify/functions/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-api-key": API_KEY, "anthropic-version": "2023-06-01" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }]
+        })
+      });
+
+      const data = await response.json();
+      
+      if (!response.ok || data.error) {
+        throw new Error(data.error?.message || `API error ${response.status}`);
+      }
+
+      const text = data.content.map(i => i.text || "").join("");
+
+      // Parse reflection and mission
+      const reflectionMatch = text.match(/REFLECTION:\s*([\s\S]*?)(?=MISSION:|$)/i);
+      const missionMatch = text.match(/MISSION:\s*([\s\S]*?)$/i);
+
+      const reflection = reflectionMatch ? reflectionMatch[1].trim() : "";
+      const mission = missionMatch ? missionMatch[1].trim() : text;
+
+      // Populate results
+      document.getElementById('result-here').textContent = here;
+      document.getElementById('result-there').textContent = thereText;
+      document.getElementById('result-why').textContent = why + (reflection ? '\n\n' + reflection : '');
+      document.getElementById('result-steps').textContent = mission;
+
+    } catch (err) {
+      document.getElementById('result-here').textContent = here;
+      document.getElementById('result-there').textContent = thereText;
+      document.getElementById('result-why').textContent = why;
+      document.getElementById('result-steps').textContent = "Error: " + (err.message || JSON.stringify(err)) + "\n\nPlease try again.";
+    }
+
+    // Show results
+    document.getElementById('section-generating').classList.remove('active');
+    document.getElementById('section-4').classList.add('active');
+    currentSection = 4;
+    updateProgress(4);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function startAgain() {
+    document.getElementById('section-4').classList.remove('active');
+    document.getElementById('here-text').value = '';
+    document.getElementById('why-text').value = '';
+    document.querySelectorAll('.dest-card').forEach(c => {
+      c.classList.remove('selected');
+      c.querySelector('textarea').value = '';
+    });
+    selectedDests.clear();
+    currentSection = 1;
+    document.getElementById('section-1').classList.add('active');
+    updateProgress(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
